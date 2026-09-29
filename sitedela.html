@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="theme-color" content="#F4F6F7">
+  <title>Para minha pretinha ❤️</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Plus+Jakarta+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      font-family: 'Plus Jakarta Sans', -apple-system, 'Helvetica Neue', sans-serif;
+      background: #F4F6F7;
+      color: #2B2D42;
+      transition: color 1.5s ease-in-out;
+      position: relative;
+    }
+
+    button {
+      -webkit-appearance: none;
+      appearance: none;
+      touch-action: manipulation;
+      font: inherit;
+    }
+    button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+    /* ---------- Temas (pôr do sol progressivo) ---------- */
+    body.theme-2 { color: #2D2327; }
+    body.theme-3 { color: #22161A; }
+    body.theme-4 { color: #FFF6F2; }
+    body.theme-5 { color: #FFF2EB; }
+    body.theme-6 { color: #FFF0E5; }
+
+    /* Gradientes não animam entre si no CSS, então cada tema é uma camada
+       que aparece com fade. */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity 1.8s ease-in-out;
+      pointer-events: none;
+    }
+    .bg-1 { background: #F4F6F7; }
+    .bg-2 { background: linear-gradient(180deg, #FDF7F4 0%, #FCECE4 60%, #F7D6C8 100%); }
+    .bg-3 { background: linear-gradient(180deg, #F8E7DF 0%, #F5CEBE 40%, #EAA28A 100%); }
+    .bg-4 { background: linear-gradient(180deg, #E69D87 0%, #D87D65 40%, #A24B5E 80%, #5C2A4A 100%); }
+    .bg-5 { background: linear-gradient(180deg, #D46A55 0%, #B84758 40%, #6E2D53 80%, #301736 100%); }
+    .bg-6 { background: linear-gradient(180deg, #E85D3F 0%, #C73E4A 35%, #6A1B4D 75%, #1F0D29 100%); }
+
+    body.theme-1 .bg-1,
+    body.theme-2 .bg-2,
+    body.theme-3 .bg-3,
+    body.theme-4 .bg-4,
+    body.theme-5 .bg-5,
+    body.theme-6 .bg-6 { opacity: 1; }
+
+    /* ---------- Sol ---------- */
+    .sunset-glow {
+      position: fixed;
+      left: 50%;
+      bottom: -70px;
+      width: 340px;
+      height: 340px;
+      margin-left: -170px;
+      background: radial-gradient(circle, #FFAA5A 0%, rgba(255, 78, 80, 0.8) 45%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+      z-index: 1;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 2s ease-in-out, transform 3s ease;
+      pointer-events: none;
+    }
+    body.theme-6 .sunset-glow { opacity: 0.85; transform: scale(1.1); }
+    body.final .sunset-glow { opacity: 0.95; transform: translateY(-40px) scale(1.35); }
+
+    /* ---------- Cadeiras vermelhas de bar de praia ---------- */
+    .beach {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: calc(112px + env(safe-area-inset-bottom, 0px));
+      z-index: 2;
+      pointer-events: none;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 14px;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      opacity: 0;
+      filter: saturate(0.4) contrast(0.8);
+      transform: translateY(20px);
+      transition: opacity 2s ease, filter 2s ease, transform 2s ease;
+    }
+    .beach::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: calc(30px + env(safe-area-inset-bottom, 0px));
+      background: linear-gradient(to top, rgba(40, 18, 40, 0.55), rgba(40, 18, 40, 0));
+      z-index: -1;
+    }
+    .beach svg { display: block; height: 96px; width: auto; }
+    body.theme-3 .beach { opacity: 0.35; filter: saturate(0.6); transform: none; }
+    body.theme-4 .beach { opacity: 0.7;  filter: saturate(0.9); transform: none; }
+    body.theme-5 .beach { opacity: 0.85; filter: saturate(1.1); transform: none; }
+    body.theme-6 .beach { opacity: 1;    filter: saturate(1.5) drop-shadow(0 0 14px rgba(220, 20, 60, 0.4)); transform: none; }
+
+    /* ---------- Layout ---------- */
+    .container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding:
+        calc(64px + env(safe-area-inset-top, 0px))
+        24px
+        calc(140px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+    }
+    .screen.active {
+      display: flex;
+      animation: enter 0.9s ease both;
+    }
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- Tipografia ---------- */
+    h1, h2 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 800;
+      font-variation-settings: 'WONK' 1, 'SOFT' 100;
+      line-height: 1.35;
+      margin-bottom: 18px;
+      letter-spacing: -0.02em;
+    }
+    #screen1 h2 { font-size: 1.85rem; max-width: 480px; }
+    .quote-title { font-size: 1.5rem; max-width: 580px; }
+
+    p.subtext {
+      font-weight: 400;
+      font-size: 1.02rem;
+      line-height: 1.65;
+      max-width: 520px;
+      margin-bottom: 22px;
+      opacity: 0.92;
+    }
+
+    /* ---------- Polaroids ---------- */
+    .polaroid-gallery {
+      --s: min(27vw, 118px);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin: 16px 0 30px;
+      width: 100%;
+      transition: opacity 2.2s ease, transform 2.2s ease, filter 2.2s ease;
+    }
+    .polaroid-gallery.small { --s: min(22vw, 92px); gap: 12px; }
+
+    .polaroid {
+      --r: 0deg;
+      background: #FFFFFF;
+      padding: 10px 10px 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.14);
+      border-radius: 2px;
+      transform: rotate(var(--r));
+    }
+    .small .polaroid { padding: 8px 8px 20px; }
+
+    .polaroid img {
+      width: var(--s);
+      height: var(--s);
+      object-fit: cover;
+      display: block;
+      background: #EEE;
+    }
+    .polaroid:nth-child(odd)  { --r: -3deg; }
+    .polaroid:nth-child(even) { --r: 3deg; }
+    .polaroid:nth-child(3n)   { --r: -5deg; }
+    .polaroid:nth-child(4n)   { --r: 4deg; }
+
+    /* Foto que não carregou vira um coraçãozinho, em vez de um quadrado cinza */
+    .polaroid.is-missing img { display: none; }
+    .polaroid.is-missing::before {
+      content: "♥";
+      display: grid;
+      place-items: center;
+      width: var(--s);
+      height: var(--s);
+      background: linear-gradient(135deg, #F6DED5, #E9B3A2);
+      color: #fff;
+      font-size: 2rem;
+    }
+
+    .fade-out-photos {
+      opacity: 0;
+      transform: scale(0.92) translateY(10px);
+      filter: blur(3px);
+    }
+
+    /* ---------- Botões ---------- */
+    .btn-starter {
+      background: #E8D5CE;
+      color: #4A3E3D;
+      border: 1px solid rgba(0,0,0,0.05);
+      padding: 16px 32px;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin-top: 22px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .btn-starter:active { transform: scale(0.97); }
+    .btn-starter.ghost {
+      background: rgba(255,255,255,0.22);
+      color: inherit;
+      border: 1px solid currentColor;
+    }
+
+    .arrow-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 10px 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: inherit;
+      opacity: 0.9;
+    }
+    .arrow-btn svg { width: 46px; height: 46px; fill: currentColor; transition: transform 0.25s ease; }
+    .arrow-btn:active svg { transform: translateX(6px); }
+
+    .final-buttons {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      width: 100%;
+      max-width: 420px;
+      margin-top: 8px;
+    }
+    .btn-choice {
+      flex: 1;
+      padding: 17px 16px;
+      border: none;
+      border-radius: 14px;
+      background: #FFFFFF;
+      color: #22161A;
+      font-family: 'Fraunces', Georgia, serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+      transition: transform 0.2s ease;
+    }
+    .btn-choice:active { transform: scale(0.96); }
+
+    .back-btn {
+      position: fixed;
+      top: calc(12px + env(safe-area-inset-top, 0px));
+      left: calc(12px + env(safe-area-inset-left, 0px));
+      z-index: 30;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.22);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      color: inherit;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .back-btn.show { opacity: 0.85; pointer-events: auto; }
+    .back-btn svg { width: 22px; height: 22px; fill: currentColor; }
+
+    /* ---------- Tela final ---------- */
+    .final-emoji { font-size: 2.2rem; letter-spacing: 0.3em; margin-top: 6px; }
+
+    .hearts {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 6;
+    }
+    .heart {
+      position: absolute;
+      bottom: -40px;
+      color: #FFB8A8;
+      opacity: 0;
+      font-size: var(--z, 22px);
+      animation: floatUp var(--d, 6s) ease-in forwards;
+    }
+    @keyframes floatUp {
+      0%   { transform: translate(0, 0) scale(0.8); opacity: 0; }
+      12%  { opacity: 0.9; }
+      100% { transform: translate(var(--x, 0), -110vh) scale(1.15); opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .screen.active { animation: none; }
+      .hearts { display: none; }
+      .bg, .sunset-glow, .beach, .polaroid-gallery { transition-duration: 0.01s; }
+    }
+  </style>
+</head>
+<body class="theme-1">
+
+  <audio id="player" preload="auto" loop playsinline></audio>
+
+  <!-- Camadas de fundo -->
+  <div class="bg bg-1"></div>
+  <div class="bg bg-2"></div>
+  <div class="bg bg-3"></div>
+  <div class="bg bg-4"></div>
+  <div class="bg bg-5"></div>
+  <div class="bg bg-6"></div>
+
+  <div class="sunset-glow"></div>
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
+  <!-- Cadeira de plástico vermelha de bar de praia, com mesinha no meio -->
+  <div class="beach" aria-hidden="true">
+    <svg viewBox="0 0 64 96" xmlns="http://www.w3.org/2000/svg">
+      <g fill="#C82323">
+        <rect x="14" y="4" width="36" height="44" rx="7"/>
+        <rect x="8" y="46" width="48" height="9" rx="4"/>
+        <rect x="12" y="55" width="5" height="41" rx="2"/>
+        <rect x="47" y="55" width="5" height="41" rx="2"/>
+        <rect x="19" y="55" width="4" height="30" rx="2" opacity=".7"/>
+        <rect x="41" y="55" width="4" height="30" rx="2" opacity=".7"/>
+      </g>
+      <g fill="#7A0F0F" opacity=".55">
+        <rect x="20" y="12" width="24" height="4" rx="2"/>
+        <rect x="20" y="22" width="24" height="4" rx="2"/>
+        <rect x="20" y="32" width="24" height="4" rx="2"/>
+      </g>
+    </svg>
+    <svg viewBox="0 0 48 96" xmlns="http://www.w3.org/2000/svg" style="height:70px">
+      <g fill="#C82323">
+        <ellipse cx="24" cy="34" rx="22" ry="5"/>
+        <rect x="21.5" y="34" width="5" height="62" rx="2"/>
+        <rect x="8" y="90" width="32" height="6" rx="3"/>
+      </g>
+    </svg>
+    <svg viewBox="0 0 64 96" xmlns="http://www.w3.org/2000/svg" style="transform: scaleX(-1)">
+      <g fill="#D62828">
+        <rect x="14" y="4" width="36" height="44" rx="7"/>
+        <rect x="8" y="46" width="48" height="9" rx="4"/>
+        <rect x="12" y="55" width="5" height="41" rx="2"/>
+        <rect x="47" y="55" width="5" height="41" rx="2"/>
+        <rect x="19" y="55" width="4" height="30" rx="2" opacity=".7"/>
+        <rect x="41" y="55" width="4" height="30" rx="2" opacity=".7"/>
+      </g>
+      <g fill="#7A0F0F" opacity=".55">
+        <rect x="20" y="12" width="24" height="4" rx="2"/>
+        <rect x="20" y="22" width="24" height="4" rx="2"/>
+        <rect x="20" y="32" width="24" height="4" rx="2"/>
+      </g>
+    </svg>
+  </div>
+
+  <button class="back-btn" id="backBtn" aria-label="Voltar" onclick="goBack()">
+    <svg viewBox="0 0 24 24"><path d="M19 11H7.14l5.43-5.43-1.42-1.42L2.86 12l8.29 7.85 1.42-1.42L7.14 13H19v-2z"/></svg>
+  </button>
+
+  <main class="container">
+
+    <!-- TELA 1 -->
+    <section class="screen active" id="screen1">
+      <h2>Antes de tudo, respira e coloca o fone.</h2>
+      <button class="btn-starter" onclick="goToScreen(2)">a pretinha está pronta</button>
+    </section>
+
+    <!-- TELA 2 -->
+    <section class="screen" id="screen2">
+      <h2 class="quote-title">eu sei que os erros no nosso caminho nos afastaram, mas eu não quero colocar um ponto final na nossa história.</h2>
+      <p class="subtext">por isso eu tô aqui para reforçar uma coisa muito importante pra mim: você é a minha certeza.</p>
+      <div class="polaroid-gallery">
+        <div class="polaroid"><img data-foto="1" alt="Nossa primeira foto"></div>
+        <div class="polaroid"><img data-foto="2" alt="Nossos começos"></div>
+      </div>
+      <button class="arrow-btn" onclick="goToScreen(3)" aria-label="Avançar">
+        <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-7.85-1.42 1.42 5.43 5.43H5v2z"/></svg>
+      </button>
+    </section>
+
+    <!-- TELA 3 -->
+    <section class="screen" id="screen3">
+      <h2 class="quote-title">não vou prometer não errar, mas vou prometer te dar todo meu amor, carinho, atenção...</h2>
+      <p class="subtext">abraços com cor de pãozinho cru, declarações ao som de músicas românticas e todas as flores do mundo.</p>
+      <div class="polaroid-gallery">
+        <div class="polaroid"><img data-foto="3" alt="Foto com flores"></div>
+        <div class="polaroid"><img data-foto="4" alt="Abraço quentinho"></div>
+        <div class="polaroid"><img data-foto="5" alt="Nosso carinho"></div>
+      </div>
+      <button class="arrow-btn" onclick="goToScreen(4)" aria-label="Avançar">
+        <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-7.85-1.42 1.42 5.43 5.43H5v2z"/></svg>
+      </button>
+    </section>
+
+    <!-- TELA 4 -->
+    <section class="screen" id="screen4">
+      <h2 class="quote-title">porque eu quero te amar aos berros na rua, no meio dos carros, com a porta aberta pra todo mundo ver que eu te amo sem culpa, nas praias desertas ao redor desse mundo inteiro pra todo mundo ver.</h2>
+      <p class="subtext">ou no seu quarto, no seu abraço, olhando no meu par de olhos favoritos e agradecendo por existir ao mesmo tempo que você (é um alinhamento milenar, você não acha?).</p>
+      <div class="polaroid-gallery small">
+        <div class="polaroid"><img data-foto="6" alt="Foto nós dois"></div>
+        <div class="polaroid"><img data-foto="7" alt="Foto na rua"></div>
+        <div class="polaroid"><img data-foto="8" alt="Foto sorriso"></div>
+        <div class="polaroid"><img data-foto="9" alt="Seu olhar"></div>
+      </div>
+      <button class="arrow-btn" onclick="goToScreen(5)" aria-label="Avançar">
+        <svg viewBox="0 0 24 24"><path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-7.85-1.42 1.42 5.43 5.43H5v2z"/></svg>
+      </button>
+    </section>
+
+    <!-- TELA 5 -->
+    <section class="screen" id="screen5">
+      <h2 class="quote-title">O que você vai fazer nessa mesma data daqui a 2 anos?</h2>
+      <div class="polaroid-gallery" id="fadeGallery">
+        <div class="polaroid"><img data-foto="10" alt="Lembrança"></div>
+        <div class="polaroid"><img data-foto="11" alt="Lembrança"></div>
+      </div>
+      <button class="btn-starter ghost" onclick="goToScreen(6)">não sei</button>
+    </section>
+
+    <!-- TELA 6 -->
+    <section class="screen" id="screen6">
+      <h2 class="quote-title">quer começar uma vida com cheiro de água do mar, carnaval, sua cervejinha e nosso amor no RJ?</h2>
+      <div class="polaroid-gallery small">
+        <div class="polaroid"><img data-foto="1" alt="Foto 1"></div>
+        <div class="polaroid"><img data-foto="2" alt="Foto 2"></div>
+        <div class="polaroid"><img data-foto="3" alt="Foto 3"></div>
+        <div class="polaroid"><img data-foto="4" alt="Foto 4"></div>
+        <div class="polaroid"><img data-foto="5" alt="Foto 5"></div>
+        <div class="polaroid"><img data-foto="6" alt="Foto 6"></div>
+      </div>
+      <div class="final-buttons">
+        <button class="btn-choice" onclick="goToScreen(7)">Sim</button>
+        <button class="btn-choice" onclick="goToScreen(7)">Com certeza</button>
+      </div>
+    </section>
+
+    <!-- TELA 7 (final) -->
+    <section class="screen" id="screen7">
+      <h2 class="quote-title">fechado. nossa vida nova começa agora.</h2>
+      <p class="subtext">água do mar, carnaval, sua cervejinha e o nosso amor, no RJ.</p>
+      <div class="final-emoji" aria-hidden="true">❤️✈️🌊</div>
+    </section>
+
+  </main>
+
+  <script>
+    /*ASSETS_START*/
+    const ASSETS = {
+      fotos: {
+        1: "foto1.jpg", 2: "foto2.jpg", 3: "foto3.jpg", 4: "foto4.jpg",
+        5: "foto5.jpg", 6: "foto6.jpg", 7: "foto7.jpg", 8: "foto8.jpg",
+        9: "foto9.jpg", 10: "foto10.jpg", 11: "foto11.jpg"
+      },
+      musicas: {
+        joaoGomes:   "lembrei_de_nos.mp3",      // João Gomes - Lembrei de nós
+        carolBiazin: "te_amo_sem_culpa.mp3",    // Carol Biazin - Te amo sem culpa
+        jao:         "por_voce.mp3"             // Jão - Por você
+      }
+    };
+    /*ASSETS_END*/
+
+    // Qual música toca em cada tela (null = silêncio)
+    const MUSIC_BY_SCREEN = {
+      1: null, 2: 'joaoGomes', 3: 'joaoGomes', 4: 'carolBiazin',
+      5: null, 6: 'jao', 7: 'jao'
+    };
+
+    const player = document.getElementById('player');
+    const backBtn = document.getElementById('backBtn');
+    const heartsBox = document.getElementById('hearts');
+    let current = 1;
+    let currentTrack = null;
+    let fadeTimer = null;
+    let heartTimer = null;
+
+    // Fotos: coloca o src e troca por um coraçãozinho se falhar
+    document.querySelectorAll('img[data-foto]').forEach(img => {
+      const polaroid = img.closest('.polaroid');
+      const src = ASSETS.fotos[img.dataset.foto];
+      img.addEventListener('error', () => polaroid.classList.add('is-missing'));
+      if (src) img.src = src; else polaroid.classList.add('is-missing');
+    });
+
+    function setMusic(key) {
+      if (key === currentTrack) return;
+      currentTrack = key;
+      player.pause();
+      if (!key || !ASSETS.musicas[key]) return;
+      player.src = ASSETS.musicas[key];
+      player.currentTime = 0;
+      const p = player.play();
+      if (p && p.catch) p.catch(() => {});
+    }
+
+    function spawnHeart() {
+      const h = document.createElement('span');
+      h.className = 'heart';
+      h.textContent = Math.random() > 0.3 ? '♥' : '❤';
+      h.style.left = Math.random() * 100 + '%';
+      h.style.setProperty('--z', (16 + Math.random() * 26) + 'px');
+      h.style.setProperty('--d', (5 + Math.random() * 4) + 's');
+      h.style.setProperty('--x', (Math.random() * 80 - 40) + 'px');
+      h.addEventListener('animationend', () => h.remove());
+      heartsBox.appendChild(h);
+    }
+    function startHearts() {
+      for (let i = 0; i < 14; i++) setTimeout(spawnHeart, i * 120);
+      heartTimer = setInterval(spawnHeart, 450);
+    }
+    function stopHearts() {
+      clearInterval(heartTimer);
+      heartTimer = null;
+      heartsBox.innerHTML = '';
+    }
+
+    function goToScreen(n) {
+      current = n;
+      clearTimeout(fadeTimer);
+
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.body.className = 'theme-' + Math.min(n, 6) + (n === 7 ? ' final' : '');
+      backBtn.classList.toggle('show', n > 1 && n < 7);
+
+      setMusic(MUSIC_BY_SCREEN[n]);
+
+      const gallery = document.getElementById('fadeGallery');
+      gallery.classList.remove('fade-out-photos');
+      if (n === 5) {
+        fadeTimer = setTimeout(() => gallery.classList.add('fade-out-photos'), 1400);
+      }
+
+      if (n === 7) { if (!heartTimer) startHearts(); } else { stopHearts(); }
+
+      document.getElementById('screen' + n).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function goBack() {
+      if (current > 1 && current < 7) goToScreen(current - 1);
+    }
+  </script>
+</body>
+</html>
